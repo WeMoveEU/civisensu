@@ -14,8 +14,6 @@ function sencivity_civicrm_config(&$config) {
 /**
  * Implements hook_civicrm_xmlMenu().
  *
- * @param array $files
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
 function sencivity_civicrm_xmlMenu(&$files) {
@@ -61,13 +59,6 @@ function sencivity_civicrm_disable() {
 /**
  * Implements hook_civicrm_upgrade().
  *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
- *
- * @return mixed
- *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
 function sencivity_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
@@ -89,12 +80,6 @@ function sencivity_civicrm_managed(&$entities) {
 /**
  * Implements hook_civicrm_caseTypes().
  *
- * Generate a list of case-types.
- *
- * @param array $caseTypes
- *
- * Note: This hook only runs in CiviCRM 4.4+.
- *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function sencivity_civicrm_caseTypes(&$caseTypes) {
@@ -112,7 +97,7 @@ function sencivity_civicrm_caseTypes(&$caseTypes) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function sencivity_civicrm_angularModules(&$angularModules) {
-_sencivity_civix_civicrm_angularModules($angularModules);
+  _sencivity_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -125,14 +110,15 @@ function sencivity_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 }
 
 /**
- * Publish a sensu check result reflecting the job execution result.
+ * Publishes a sensu check result reflecting the job execution result.
  * Status OK in case of success, WARNING in case of failure.
  */
 function sencivity_civicrm_postJob($job, $params, $result) {
   if ($result['is_error']) {
     $status = 1;
     $output = "Job '$job->name' failed: " . CRM_Utils_Array::value('error_message', $result, 'no error message');
-  } else {
+  }
+  else {
     $status = 0;
     $output = "Job '$job->name' succeeded with value(s): " . CRM_Utils_Array::value('values', $result, 'no value');
   }
@@ -141,7 +127,7 @@ function sencivity_civicrm_postJob($job, $params, $result) {
   $source = Civi::settings()->get('sensu_client');
   $curl = curl_init("$sensu_url/results");
   curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
   $jsonData = json_encode(array(
     'source' => $source,
     'name' => 'civicrm_jobs',
@@ -156,4 +142,3 @@ function sencivity_civicrm_postJob($job, $params, $result) {
     CRM_Core_Error::debug_var("sensu_response", curl_getinfo($curl));
   }
 }
-

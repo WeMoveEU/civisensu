@@ -8,5 +8,5 @@ class CRM_Sencivity_Form_Settings extends CRM_Admin_Form_Setting {
     'sensu_url' => 'sencivity',
     'sensu_client' => 'sencivity',
   );
-}
 
+}
