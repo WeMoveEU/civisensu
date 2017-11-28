@@ -137,11 +137,13 @@ function sencivity_civicrm_postJob($job, $params, $result) {
     $output = "Job '$job->name' succeeded with value(s): " . CRM_Utils_Array::value('values', $result, 'no value');
   }
 
-  $curl = curl_init("http://localhost:4567/results");
+  $sensu_url = Civi::settings()->get('sensu_url');
+  $source = Civi::settings()->get('sensu_client');
+  $curl = curl_init("$sensu_url/results");
   curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
   curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
   $jsonData = json_encode(array(
-    'source' => 'sencivity',
+    'source' => $source,
     'name' => 'civicrm_jobs',
     'output' => $output,
     'status' => $status,
@@ -149,6 +151,9 @@ function sencivity_civicrm_postJob($job, $params, $result) {
   curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
 
   $response = curl_exec($curl);
-  CRM_Core_Error::debug_var("sensu response", curl_getinfo($curl));
+  if ($response === FALSE) {
+    CRM_Core_Error::createError("Could not push job execution result to Sensu.", 8000, 'Error');
+    CRM_Core_Error::debug_var("sensu_response", curl_getinfo($curl));
+  }
 }
 
