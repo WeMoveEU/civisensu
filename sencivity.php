@@ -9,6 +9,11 @@ require_once 'sencivity.civix.php';
  */
 function sencivity_civicrm_config(&$config) {
   _sencivity_civix_civicrm_config($config);
+
+  $extensions = CRM_Extension_System::singleton()->getManager()->getStatuses();
+  if ($extensions['com.drastikbydesign.stripe'] == CRM_Extension_Manager::STATUS_INSTALLED) {
+    $config->fatalErrorHandler = 'sencivity_stripe_fatalHandler';
+  }
 }
 
 /**
@@ -141,4 +146,15 @@ function sencivity_civicrm_postJob($job, $params, $result) {
     CRM_Core_Error::createError("Could not push job execution result to Sensu.", 8000, 'Error');
     CRM_Core_Error::debug_var("sensu_response", curl_getinfo($curl));
   }
+}
+
+
+/**
+ * Fatal error handler for Stripe webhook
+ */
+function sencivity_stripe_fatalHandler($vars) {
+  CRM_Core_Error::debug_log_message("Got stripe error: " . $vars['message']);
+
+  // We let CiviCRM handle the error as it normally would
+  return FALSE;
 }
