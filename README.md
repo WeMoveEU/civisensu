@@ -27,3 +27,9 @@ to change it to an existing client of your infrastructure, and/or you may to use
 names for different Civi environments (test, prod, etc).
 
 Once these settings are saved, you should be able to see the execution result of jobs in Sensu.
+
+## Stripe errors
+This feature uses the fatal error handler to send a Sensu warning whenever a fatal error occurs 
+and the error message contains "stripe" (regardless of case). The Sensu check is called
+`civicrm_stripe_webhook` and the procedure to use this feature is the same as for the job execution 
+results above.

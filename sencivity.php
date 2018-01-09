@@ -135,7 +135,10 @@ function sencivity_civicrm_postJob($job, $params, $result) {
  * Fatal error handler for Stripe webhook
  */
 function sencivity_stripe_fatalHandler($vars) {
-  CRM_Core_Error::debug_log_message("Got stripe error: " . $vars['message']);
+  if (stripos($vars['message'], 'stripe') !== FALSE) {
+    $client = new CRM_Sencivity_Client();
+    $client->warning('civicrm_stripe_webhook', "Got stripe error: " . $vars['message']);
+  }
 
   // We let CiviCRM handle the error as it normally would
   return FALSE;
