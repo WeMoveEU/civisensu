@@ -119,32 +119,14 @@ function sencivity_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * Status OK in case of success, WARNING in case of failure.
  */
 function sencivity_civicrm_postJob($job, $params, $result) {
+  $client = new CRM_Sencivity_Client();
   if ($result['is_error']) {
-    $status = 1;
     $output = "Job '$job->name' failed: " . CRM_Utils_Array::value('error_message', $result, 'no error message');
+    $client->warning('civicrm_jobs', $output);
   }
   else {
-    $status = 0;
     $output = "Job '$job->name' succeeded with value(s): " . CRM_Utils_Array::value('values', $result, 'no value');
-  }
-
-  $sensu_url = Civi::settings()->get('sensu_url');
-  $source = Civi::settings()->get('sensu_client');
-  $curl = curl_init("$sensu_url/results");
-  curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
-  curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-  $jsonData = json_encode(array(
-    'source' => $source,
-    'name' => 'civicrm_jobs',
-    'output' => $output,
-    'status' => $status,
-  ));
-  curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
-
-  $response = curl_exec($curl);
-  if ($response === FALSE) {
-    CRM_Core_Error::createError("Could not push job execution result to Sensu.", 8000, 'Error');
-    CRM_Core_Error::debug_var("sensu_response", curl_getinfo($curl));
+    $client->ok('civicrm_jobs', $output);
   }
 }
 
