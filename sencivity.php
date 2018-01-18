@@ -120,13 +120,23 @@ function sencivity_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  */
 function sencivity_civicrm_postJob($job, $params, $result) {
   $client = new CRM_Sencivity_Client();
+  $ttl = NULL;
+  if ($job->is_active) {
+    if ($job->run_frequency == 'Hourly') {
+      $ttl = 4000;
+    }
+    else if ($job->run_frequency == 'Daily') {
+      $ttl = 90000;
+    }
+  }
+
   if ($result['is_error']) {
     $output = "Job '$job->name' failed: " . CRM_Utils_Array::value('error_message', $result, 'no error message');
-    $client->warning('civicrm_jobs', $output);
+    $client->warning("civicrm_jobs_{$job->api_entity}_{$job->api_action}", $output, $ttl);
   }
   else {
     $output = "Job '$job->name' succeeded with value(s): " . CRM_Utils_Array::value('values', $result, 'no value');
-    $client->ok('civicrm_jobs', $output);
+    $client->ok("civicrm_jobs_{$job->api_entity}_{$job->api_action}", $output, $ttl);
   }
 }
 

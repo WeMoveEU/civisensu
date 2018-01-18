@@ -22,9 +22,10 @@ class CRM_Sencivity_Client {
    * @param $check: string - name of the check
    * @param $status: int - check status, see RESULT_* constants
    * @param $output: string - optional description of the result
+   * @param $ttl: int - optional number of seconds before which this check should send a result again
    * @see shortcut methods ok, warning, critical
    */
-  public function sendResult($check, $status, $output = "") {
+  public function sendResult($check, $status, $output = "", $ttl = NULL) {
     $curl = curl_init("{$this->sensu_url}/results");
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
@@ -34,6 +35,9 @@ class CRM_Sencivity_Client {
       'output' => $output,
       'status' => $status,
     ));
+    if ($ttl) {
+      $jsonData['ttl'] = $ttl;
+    }
     curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
 
     $response = curl_exec($curl);
@@ -44,15 +48,15 @@ class CRM_Sencivity_Client {
     curl_close($curl);
   }
 
-  public function ok($check, $output = "") {
-    $this->sendResult($check, static::RESULT_OK, $output);
+  public function ok($check, $output = "", $ttl = NULL) {
+    $this->sendResult($check, static::RESULT_OK, $output, $ttl);
   }
 
-  public function warning($check, $output = "") {
-    $this->sendResult($check, static::RESULT_WARNING, $output);
+  public function warning($check, $output = "", $ttl = NULL) {
+    $this->sendResult($check, static::RESULT_WARNING, $output, $ttl);
   }
 
-  public function critical($check, $output = "") {
-    $this->sendResult($check, static::RESULT_CRITICAL, $output);
+  public function critical($check, $output = "", $ttl = NULL) {
+    $this->sendResult($check, static::RESULT_CRITICAL, $output, $ttl);
   }
 }
