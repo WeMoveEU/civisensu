@@ -29,15 +29,16 @@ class CRM_Sencivity_Client {
     $curl = curl_init("{$this->sensu_url}/results");
     curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-    $jsonData = json_encode(array(
+    $jsonData = array(
       'source' => $this->source,
       'name' => $check,
       'output' => $output,
       'status' => $status,
-    ));
+    );
     if ($ttl) {
       $jsonData['ttl'] = $ttl;
     }
+    $jsonData = json_encode($jsonData);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
 
     $response = curl_exec($curl);
