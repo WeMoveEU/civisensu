@@ -123,7 +123,7 @@ function sencivity_civicrm_postJob($job, $params, $result) {
   $ttl = NULL;
   if ($job->is_active) {
     if ($job->run_frequency == 'Hourly') {
-      $ttl = 4000;
+      $ttl = 4200;
     }
     else if ($job->run_frequency == 'Daily') {
       $ttl = 90000;
