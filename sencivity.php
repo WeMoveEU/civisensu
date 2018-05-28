@@ -122,8 +122,11 @@ function sencivity_civicrm_postJob($job, $params, $result) {
   $client = new CRM_Sencivity_Client();
   $ttl = NULL;
   if ($job->is_active) {
-    if ($job->run_frequency == 'Hourly') {
-      $ttl = 4400;
+    if (isset($params['sensu_ttl'])) {
+      $ttl = $params['sensu_ttl'];
+    }
+    else if ($job->run_frequency == 'Hourly') {
+      $ttl = 4000;
     }
     else if ($job->run_frequency == 'Daily') {
       $ttl = 90000;

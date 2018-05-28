@@ -12,7 +12,7 @@ names for different Civi environments (test, prod, etc).
 
 Once these settings are saved, you should be able to see the execution result of jobs in Sensu.
 The checks are names `civicrm_jobs_<api_entity>_<api_action>`. If the job is active and has an hourly or daily
-run frequency, a corresponding TTL of respectively 4000 or 90000 seconds is sent in the result.
+run frequency, a corresponding TTL of respectively 4000 or 90000 seconds is sent in the result. This TTL can be overriden by setting a job parameter `sensu_ttl` with the value of the TTL in seconds.
 You can define the check in Sensu if you need to specific configuration (e.g. a different handler than the default).
 
 ## Stripe errors
