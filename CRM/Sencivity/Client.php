@@ -36,7 +36,7 @@ class CRM_Sencivity_Client {
       'status' => $status,
     );
     if ($ttl) {
-      $jsonData['ttl'] = $ttl;
+      $jsonData['ttl'] = intval($ttl);
     }
     $jsonData = json_encode($jsonData);
     curl_setopt($curl, CURLOPT_POSTFIELDS, $jsonData);
