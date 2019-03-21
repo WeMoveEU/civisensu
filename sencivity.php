@@ -148,9 +148,12 @@ function sencivity_civicrm_postJob($job, $params, $result) {
  * Fatal error handler for Stripe webhook
  */
 function sencivity_stripe_fatalHandler($vars) {
-  if (stripos($vars['message'], 'stripe') !== FALSE) {
-    $client = new CRM_Sencivity_Client();
-    $client->warning('civicrm_stripe_webhook', "Got stripe error: " . $vars['message']);
+  if ($vars['message'] == 'Expected one Contribution but found 0') {
+    $trace = $vars['exception']->getTraceAsString();
+    if (stripos($trace, "civicrm_invoke('payment', 'ipn', '1')") !== FALSE) {
+      $client = new CRM_Sencivity_Client();
+      $client->warning('civicrm_stripe_webhook', "Got stripe error: " . $vars['message']);
+    }
   }
 
   // We let CiviCRM handle the error as it normally would
