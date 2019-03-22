@@ -151,8 +151,12 @@ function sencivity_stripe_fatalHandler($vars) {
   if ($vars['message'] == 'Expected one Contribution but found 0') {
     $trace = $vars['exception']->getTraceAsString();
     if (stripos($trace, "civicrm_invoke('payment', 'ipn', '1')") !== FALSE) {
+      $re = '/trxn_id.*(ch_[a-zA-Z0-9]*)/m';
+      preg_match_all($re, serialize($vars), $matches, PREG_SET_ORDER, 0);
+      $paymentId = $matches[0][1];
       $client = new CRM_Sencivity_Client();
-      $client->warning('civicrm_stripe_webhook', "Got stripe error: " . $vars['message']);
+      $client->warning('civicrm_stripe_webhook', "Got stripe error: " . $vars['message']
+        . '(Stripe Payment Id: ' . $paymentId . ')');
     }
   }
 
