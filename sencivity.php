@@ -156,7 +156,7 @@ function sencivity_stripe_fatalHandler($vars) {
       $paymentId = $matches[0][1];
       $client = new CRM_Sencivity_Client();
       $client->warning('civicrm_stripe_webhook', "Got stripe error: " . $vars['message']
-        . '(Stripe Payment Id: ' . $paymentId . ')');
+        . ' (Stripe Payment Id: ' . $paymentId . ')');
     }
   }
 
