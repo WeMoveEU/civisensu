@@ -44,6 +44,7 @@ class CRM_Sencivity_Client {
     $response = curl_exec($curl);
     if ($response === FALSE) {
       CRM_Core_Error::createError("Could not push check result for $check to Sensu.", 8000, 'Error');
+      CRM_Core_Error::debug_log_message("Could not push check result for $check to Sensu.");
       CRM_Core_Error::debug_var("sensu_response", curl_getinfo($curl));
     }
     curl_close($curl);
